@@ -1793,7 +1793,10 @@ wce83:: ; ce83
 wce84:: ; ce84
 	ds $1
 
-	ds $1c
+	ds $15
+
+wce9a:: ; ce9a
+	ds $7
 
 wcea1:: ; cea1
 	ds $1

@@ -1560,10 +1560,34 @@ Func_19a12: ; 19a12 (6:5a12)
 	ret
 ; 0x19a1f
 
-	INCROM $19a1f, $19c20
+	INCROM $19a1f, $19b41
+
+Func_19b41: ; 19b41 (6:5b41)
+	INCROM $19b41, $19b8c
+
+Func_19b8c: ; 19b8c (6:5b8c)
+	INCROM $19b8c, $19bc5
+
+Func_19bc5: ; 19bc5 (6:5bc5)
+	INCROM $19bc5, $19bfb
+
+Func_19bfb: ; 19bfb (6:5bfb)
+	INCROM $19bfb, $19c20
 
 Func_19c20: ; 19c20 (6:5c20)
-	INCROM $19c20, $1a4cf
+	INCROM $19c20, $19e42
+
+Func_19e42: ; 19e42 (6:5e42)
+	INCROM $19e42, $19eb4
+
+Func_19eb4: ; 19eb4 (6:5eb4)
+	INCROM $19eb4, $1a162
+
+Func_1a162: ; 1a162 (6:6162)
+	INCROM $1a162, $1a270
+
+Func_1a270: ; 1a270 (6:6270)
+	INCROM $1a270, $1a4cf
 
 Func_1a4cf: ; 1a4cf (6:64cf)
 	INCROM $1a4cf, $1a61f
@@ -1575,29 +1599,29 @@ Func_1a61f: ; 1a61f (6:661f)
 	pop af
 	or a
 	jr nz, .else
-	ld a, $40
+	ld a, MOLTRES2
 	call .legendary_card_text
-	ld a, $5f
+	ld a, ARTICUNO2
 	call .legendary_card_text
-	ld a, $76
+	ld a, ZAPDOS3
 	call .legendary_card_text
-	ld a, $c1
+	ld a, DRAGONITE1
 .legendary_card_text
 	ldtx hl, ReceivedLegendaryCardText
 	jr .print_text
 .else
 	ldtx hl, ReceivedCardText
-	cp $1e
+	cp VILEPLUME
 	jr z, .print_text
-	cp $43
+	cp BLASTOISE
 	jr z, .print_text
 	ldtx hl, ReceivedPromotionalFlyingPikachuText
-	cp $64
+	cp FLYING_PIKACHU
 	jr z, .print_text
 	ldtx hl, ReceivedPromotionalSurfingPikachuText
-	cp $65
+	cp SURFING_PIKACHU1
 	jr z, .print_text
-	cp $66
+	cp SURFING_PIKACHU2
 	jr z, .print_text
 	ldtx hl, ReceivedPromotionalCardText
 .print_text

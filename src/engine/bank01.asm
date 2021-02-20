@@ -5692,7 +5692,6 @@ PrintPlayAreaCardAttachedEnergies: ; 63e6 (1:63e6)
 	ld b, NUM_TYPES
 	call SafeCopyDataHLtoDE
 	ret
-; 0x6423
 
 Func_6423: ; 6423 (1:6423)
 	ld hl, wDefaultText
@@ -5704,7 +5703,6 @@ Func_6423: ; 6423 (1:6423)
 	dec e
 	jr nz, .asm_6428
 	ret
-; 0x6431
 
 Func_6431: ; 6431 (1:6431)
 	xor a
@@ -5769,7 +5767,6 @@ Func_6435:
 	call LoadCardDataToBuffer1_FromCardID
 	call OpenCardPage_FromCheckPlayArea
 	jp Func_6435
-; 0x64b0
 
 Func_64b0: ; 64b0 (1:64b0)
 	call ZeroObjectPositionsAndToggleOAMCopy
@@ -5809,7 +5806,6 @@ Func_64b0: ; 64b0 (1:64b0)
 	ld [wNumPlayAreaItems], a
 	call EnableLCD
 	ret
-; 0x64fc
 
 Func_64fc: ; 64fc (1:64fc)
 	ld a, [wLoadedCard1Atk1Category]
@@ -5822,7 +5818,6 @@ Func_64fc: ; 64fc (1:64fc)
 	ld hl, wLoadedCard1Atk1Name
 	call InitTextPrinting_ProcessTextFromPointerToID
 	ret
-; 0x6510
 
 ; display the screen that prompts the player to use the selected card's
 ; Pokemon Power. Includes the card's information above, and the Pokemon Power's
@@ -8120,7 +8115,6 @@ _TossCoin: ; 71ad (1:71ad)
 	ret z
 	scf
 	ret
-; 0x72ff
 
 Func_72ff: ; 72ff (1:72ff)
 	ldh [hff96], a
@@ -8131,7 +8125,6 @@ Func_72ff: ; 72ff (1:72ff)
 	call SerialSendByte
 	call Func_7344
 	ret
-; 0x7310
 
 Func_7310: ; 7310 (1:7310)
 	ldh [hff96], a
@@ -8166,7 +8159,6 @@ Func_7338: ; 7338 (1:7338)
 	jr c, Func_7338
 	call Func_7344
 	ret
-; 0x7344
 
 Func_7344: ; 7344 (1:7344)
     push af
@@ -8179,7 +8171,6 @@ Func_7344: ; 7344 (1:7344)
     call Func_3b31
     call DuelTransmissionError
     ret
-; 0x7354
 
 BuildVersion: ; 7354 (1:7354)
 	db "VER 12/20 09:36", TX_END
@@ -8197,59 +8188,58 @@ Func_7364: ; 7364 (1:7364)
 	xor a
 	ld [wOpponentDeckID], a
 	call Func_73d8
-.asm_7384
+.input_loop
 	call DoFrame
 	ldh a, [hDPadHeld]
 	or a
-	jr z, .asm_7384
+	jr z, .input_loop
 	ld b, a
 	and A_BUTTON | START
-	jr nz, .asm_73cd
+	jr nz, .continue
 	bit B_BUTTON_F, b
-	jr nz, .asm_73cb
+	jr nz, .quit
 	ld a, [wOpponentDeckID]
 	bit D_RIGHT_F, b
-	jr z, .asm_73a2
+	jr z, .check_left
 	inc a
-	cp $35
-	jr c, .asm_73a2
-	xor a
-.asm_73a2
+	cp DECK_IDS_END + 1
+	jr c, .check_left
+	xor a ; wrap to 0
+.check_left
 	bit D_LEFT_F, b
-	jr z, .asm_73ae
+	jr z, .check_up
 	or a
-	jr nz, .asm_73ad
-	ld a, IMAKUNI_DECK_ID
-	jr .asm_73ae
-.asm_73ad
+	jr nz, .no_wrap
+	ld a, DECK_IDS_END ; wrap to max
+	jr .check_up
+.no_wrap
 	dec a
-.asm_73ae
+.check_up
 	bit D_UP_F, b
-	jr z, .asm_73b9
-	add $0a
-	cp $35
-	jr c, .asm_73b9
-	xor a
-.asm_73b9
+	jr z, .check_down
+	add 10
+	cp DECK_IDS_END + 1
+	jr c, .check_down
+	xor a ; wrap to 0
+.check_down
 	bit D_DOWN_F, b
-	jr z, .asm_73c3
-	sub $0a
-	jr nc, .asm_73c3
-	ld a, IMAKUNI_DECK_ID
-.asm_73c3
+	jr z, .save_deck_id
+	sub 10
+	jr nc, .save_deck_id
+	ld a, DECK_IDS_END ; wrap to max
+.save_deck_id
 	ld [wOpponentDeckID], a
 	call Func_73d8
-	jr .asm_7384
-.asm_73cb
+	jr .input_loop
+.quit
 	scf
 	ret
-.asm_73cd
+.continue
 	ld a, [wOpponentDeckID]
 	ld [wNPCDuelDeckID], a
 	call Func_3ae8
 	or a
 	ret
-; 0x73d8
 
 Func_73d8: ; 73d8 (1:73d8)
 	ld a, [wOpponentDeckID]
@@ -8262,7 +8252,7 @@ Func_73d8: ; 73d8 (1:73d8)
 	ld [hli], a
 	ld [hl], a
 .asm_73ec
-	ld hl, Data_7408
+	ld hl, SelectOpponentMenuTexts
 	call PlaceTextItems
 	call DrawDuelistPortraitsAndNames
 	ld a, [wOpponentDeckID]
@@ -8273,8 +8263,11 @@ Func_73d8: ; 73d8 (1:73d8)
 	call WriteTwoByteNumberInTxSymbolFormat
 	ret
 
-Data_7408: ; 7408 (1:7408)
-	INCROM $7408, $7415
+SelectOpponentMenuTexts: ; 7408 (1:7408)
+	textitem 10,  0, ClearOpponentNameText
+	textitem 10, 10, NumberOfPrizesText
+	textitem  3, 14, SelectComputerOpponentText
+	db $ff
 
 Func_7415: ; 7415 (1:7415)
 	xor a
@@ -8413,9 +8406,98 @@ PlayAttackAnimation: ; 7494 (1:7494)
 	pop af
 	ldh [hWhoseTurn], a
 	ret
-; 0x74dc
 
-	INCROM $74dc, $7571
+Func_74dc: ; 74dc (1:74dc)
+	call EmptyScreen
+	call EnableLCD
+	ld a, 1
+	ld [wce9a], a
+.input_loop
+	call DoFrame
+	ldh a, [hDPadHeld]
+	ld b, a
+	ld a, [wce9a]
+	bit D_LEFT_F, b
+	jr z, .no_left
+	dec a
+.no_left
+	bit D_RIGHT_F, b
+	jr z, .no_right
+	inc a
+.no_right
+	bit D_UP_F, b
+	jr z, .no_up
+	add 10
+.no_up
+	bit D_DOWN_F, b
+	jr z, .no_down
+	sub 10
+.no_down
+	ld [wce9a], a
+	lb bc, 5, 5
+	bank1call WriteTwoByteNumberInTxSymbolFormat
+	ldh a, [hKeysPressed]
+	and START
+	jr z, .input_loop
+	ld a, [wce9a]
+	ld e, a
+	ld d, 0
+.card_loop
+	call LoadCardDataToBuffer1_FromCardID
+	ret c
+	push de
+	ld a, e
+	call Func_758a
+	pop de
+	inc de
+	jr .card_loop
+
+LinkDuel_WaitForStartButton: ; 7528 (1:7528)
+	call Func_0e8e
+	ldtx hl, PressStartWhenReadyText
+	call DrawWideTextBox_PrintText
+	call EnableLCD
+.input_loop
+	call DoFrame
+	ldh a, [hKeysPressed]
+	bit B_BUTTON_F, a
+	jr nz, .link_cancel
+	and START
+	call Func_0cc5
+	jr nc, .input_loop
+	ld hl, wPlayerDuelVariables
+	ld a, [wSerialOp]
+	cp $29
+	jr z, .link_continue
+	ld hl, wOpponentDuelVariables
+	cp $12
+	jr z, .link_continue
+.link_cancel
+	call ResetSerial
+	scf
+	ret
+.link_continue
+	or a
+	ret
+
+Func_755c: ; 755c (1:755c)
+	ret
+
+Func_755d: ; 755d (1:755d)
+	farcall Func_19bfb
+	ret
+
+Func_7562: ; 7562 (1:7562)
+	farcall Func_19bc5
+	ret
+
+Func_7567: ; 7567 (1:7567)
+	farcall Func_19b8c
+	ret
+
+Func_756c: ; 756c (1:756c)
+	farcall Func_19b41
+	ret
 
 Func_7571: ; 7571 (1:7571)
 	farcall Func_19c20
@@ -8424,9 +8506,22 @@ Func_7571: ; 7571 (1:7571)
 Func_7576: ; 7576 (1:7576)
 	farcall Func_1991f
 	ret
-; 0x757b
 
-	INCROM $757b, $758f
+Func_757b: ; 757b (1:757b)
+	farcall Func_19e42
+	ret
+
+Func_7580: ; 7580 (1:7580)
+	farcall Func_1a162
+	ret
+
+Func_7585: ; 7585 (1:7585)
+	farcall Func_1a270
+	ret
+
+Func_758a: ; 758a (1:758a)
+	farcall Func_19eb4
+	ret
 
 Func_758f: ; 758f (1:758f)
 	farcall Func_1a4cf
