@@ -5,35 +5,33 @@ DEF done EQUS "db TX_END"
 DEF half2full EQUS "db TX_HALF2FULL"
 
 MACRO _textfw
-	PUSHO
-	OPT Wno-unmapped-char
 	REPT _NARG
 		IF STRLEN(\1) > 0
 			IF STRCMP(STRSUB(\1, 1, 1), "<") == 0 && STRLEN(\1) > 1
 				db \1
 			ELSE
 				FOR i, STRLEN(\1)
-					IF CHARLEN(STRCAT("FW{x:TX_KATAKANA}_", STRSUB(\1, i + 1, 1))) == 1
+					IF INCHARMAP(STRCAT("FW{x:TX_KATAKANA}_", STRSUB(\1, i + 1, 1)))
 						IF cur_set != TX_KATAKANA
 							DEF cur_set = TX_KATAKANA
 							db cur_set
 						ENDC
 						db STRCAT("FW{x:TX_KATAKANA}_", STRSUB(\1, i + 1, 1))
-					ELIF CHARLEN(STRCAT("FW{x:TX_HIRAGANA}_", STRSUB(\1, i + 1, 1))) == 1
+					ELIF INCHARMAP(STRCAT("FW{x:TX_HIRAGANA}_", STRSUB(\1, i + 1, 1)))
 						IF cur_set != TX_HIRAGANA
 							DEF cur_set = TX_HIRAGANA
 							db cur_set
 						ENDC
 						db STRCAT("FW{x:TX_HIRAGANA}_", STRSUB(\1, i + 1, 1))
-					ELIF CHARLEN(STRCAT("FW0_", STRSUB(\1, i + 1, 1))) == 1
+					ELIF INCHARMAP(STRCAT("FW0_", STRSUB(\1, i + 1, 1)))
 						db STRCAT("FW0_", STRSUB(\1, i + 1, 1))
-					ELIF CHARLEN(STRCAT("FW1_", STRSUB(\1, i + 1, 1))) == 1
+					ELIF INCHARMAP(STRCAT("FW1_", STRSUB(\1, i + 1, 1)))
 						db TX_FULLWIDTH1, STRCAT("FW1_", STRSUB(\1, i + 1, 1))
-					ELIF CHARLEN(STRCAT("FW2_", STRSUB(\1, i + 1, 1))) == 1
+					ELIF INCHARMAP(STRCAT("FW2_", STRSUB(\1, i + 1, 1)))
 						db TX_FULLWIDTH2, STRCAT("FW2_", STRSUB(\1, i + 1, 1))
-					ELIF CHARLEN(STRCAT("FW3_", STRSUB(\1, i + 1, 1))) == 1
+					ELIF INCHARMAP(STRCAT("FW3_", STRSUB(\1, i + 1, 1)))
 						db TX_FULLWIDTH3, STRCAT("FW3_", STRSUB(\1, i + 1, 1))
-					ELIF CHARLEN(STRCAT("FW4_", STRSUB(\1, i + 1, 1))) == 1
+					ELIF INCHARMAP(STRCAT("FW4_", STRSUB(\1, i + 1, 1)))
 						db TX_FULLWIDTH4, STRCAT("FW4_", STRSUB(\1, i + 1, 1))
 					ELSE
 						FAIL STRCAT("Unmapped fullwidth character: ", STRSUB(\1, i + 1, 1))
@@ -43,7 +41,6 @@ MACRO _textfw
 		ENDC
 		SHIFT
 	ENDR
-	POPO
 ENDM
 
 MACRO textfw
