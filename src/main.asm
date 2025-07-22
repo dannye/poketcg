@@ -1,5 +1,6 @@
 INCLUDE "macros.asm"
 INCLUDE "constants.asm"
+INCLUDE "constants/textpointer_constants.asm"
 
 SECTION "Game Loop", ROMX
 INCLUDE "engine/game_loop.asm"

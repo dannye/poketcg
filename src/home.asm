@@ -1,5 +1,6 @@
 INCLUDE "macros.asm"
 INCLUDE "constants.asm"
+INCLUDE "constants/textpointer_constants.asm"
 
 ; rst vectors
 SECTION "rst00", ROM0

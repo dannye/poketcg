@@ -46,10 +46,11 @@ ENDM
 ; poketcg specific macros below
 
 MACRO textpointer
-	dw (((\1) + ($4000 * (BANK(\1) - 1))) - (TextOffsets + ($4000 * (BANK(TextOffsets) - 1)))) & $ffff
-	db (((\1) + ($4000 * (BANK(\1) - 1))) - (TextOffsets + ($4000 * (BANK(TextOffsets) - 1)))) >> 16
+	IF DEF(DEFINE_TEXT_OFFSET_TABLE)
+		dw (((\1) + ($4000 * (BANK(\1) - 1))) - (TextOffsets + ($4000 * (BANK(TextOffsets) - 1)))) & $ffff
+		db (((\1) + ($4000 * (BANK(\1) - 1))) - (TextOffsets + ($4000 * (BANK(TextOffsets) - 1)))) >> 16
+	ENDC
 	const \1_
-	EXPORT \1_
 ENDM
 
 MACRO energy
